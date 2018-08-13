@@ -1,0 +1,17 @@
+<div class="form-group" [id]="id()">
+
+<fieldset>
+    <legend>
+      <span class="form-label" *ngIf="caseField.label">{{caseField | ccdFieldLabel }}</span>
+      <span class="form-hint" *ngIf="caseField.hint_text">{{caseField.hint_text}}</span>
+      <span class="error-message" *ngIf="dateControl.errors && dateControl.touched">{{dateControl.errors | ccdFirstError}}</span>
+    </legend>
+
+  <ccd-write-complex-type-field
+    [hidden]="!shouldShowDetailFields()"
+    [(caseField)]="caseField"
+    [renderLabel]="false"
+    [registerControl]="registerControl"
+    #writeComplexFieldComponent>
+  </ccd-write-complex-type-field>
+</div>
