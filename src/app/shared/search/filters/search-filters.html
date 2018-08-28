@@ -18,6 +18,9 @@
       <ccd-field-write [caseField]="searchInput.field" [formGroup]="formGroup" [isExpanded]="true" (keyup.enter)="apply()"></ccd-field-write>
     </div>
   </div>
-
+  <textarea rows="10" cols="50" #textarea>
+      {"query": {"match_all": {}}}
+  </textarea>
+  <button (click)="send(textarea.value)">Send query</button>
   <button [disabled]="!isSearchableAndSearchInputsReady()" type="button" class="button" (click)="apply()" (keyup.enter)="apply()" >Apply</button>
 </form>

@@ -113,6 +113,11 @@ export class SearchFiltersComponent implements OnInit {
            this.selected.jurisdiction === undefined;
   }
 
+  send(query) {
+    console.log('query:', query)
+    this.searchService.query(query);
+  }
+
   private selectCaseType(caseTypes: CaseType[]) {
     if (caseTypes.length === 1) {
       this.selected.caseType = caseTypes[0];

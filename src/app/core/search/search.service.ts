@@ -46,4 +46,20 @@ export class SearchService {
         return searchInputs;
       });
   }
+
+  query(query: string) {
+    let url = `${this.appConfig.getCaseDataUrl()}/searchCases?ctid=autotest1_aat_cases`;
+    console.log('sending query: ', url)
+    console.log('sending argument: ', query)
+    return this.httpService
+      .post(url, query)
+      .map(response => {
+        console.log(response)
+      })
+      .catch((error: any): any => {
+        console.log(error);
+      }).subscribe(data => {
+        console.log(data);
+      });
+  }
 }
