@@ -48,7 +48,7 @@ export class SearchService {
   }
 
   query(query: string) {
-    let url = `${this.appConfig.getCaseDataUrl()}/searchCases?ctid=autotest1_aat_cases`;
+    let url = `${this.appConfig.getCaseDataUrl()}/searchCases?ctid=aat_cases`;
     console.log('sending query: ', url)
     console.log('sending argument: ', query)
     return this.httpService
