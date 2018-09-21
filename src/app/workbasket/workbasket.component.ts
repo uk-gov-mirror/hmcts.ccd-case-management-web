@@ -12,6 +12,8 @@ import { CaseType } from '../shared/domain/definition/case-type.model';
 import { FormGroup } from '@angular/forms';
 import { SearchResultComponent } from '../shared/search/search-result.component';
 import { Observable } from 'rxjs/Observable';
+import { AlertService } from '../core/alert/alert.service';
+import { plainToClass } from 'class-transformer';
 
 const ATTRIBUTE_SEPARATOR = '.';
 
@@ -32,7 +34,7 @@ export class WorkbasketComponent implements OnInit {
   page: number;
   paginationMetadata: PaginationMetadata;
   caseFilterFG: FormGroup;
-  metaDataFields: string[];
+  metadataFields: string[];
 
   @ViewChild('searchResults')
   searchResults: SearchResultComponent;
@@ -40,7 +42,8 @@ export class WorkbasketComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private searchService: SearchService,
               private paginationService: PaginationService,
-              private jurisdictionService: JurisdictionService) { }
+              private jurisdictionService: JurisdictionService,
+              private alertService: AlertService) { }
 
   ngOnInit() {
     this.profile = this.route.parent.snapshot.data.profile;
@@ -55,7 +58,7 @@ export class WorkbasketComponent implements OnInit {
     }
 
     this.caseFilterFG = filter.formGroup;
-    this.metaDataFields = filter.metadataFields;
+    this.metadataFields = filter.metadataFields;
 
     const paginationParams = {};
     const searchParams = {};
@@ -86,12 +89,15 @@ export class WorkbasketComponent implements OnInit {
 
     Observable.forkJoin(searchObservable, paginationMetadataObservable)
         .subscribe(results => {
-          this.resultView = results[0];
+          this.resultView = plainToClass(SearchResultView, results[0]);
           this.jurisdiction = filter.jurisdiction;
           this.caseType = filter.caseType;
           this.caseState = filter.caseState;
           this.page = filter.page;
           this.paginationMetadata = results[1];
+          if (this.resultView.result_error) {
+            this.alertService.warning(this.resultView.result_error);
+          }
         });
 
     this.scrollToTop();
@@ -142,7 +148,7 @@ export class WorkbasketComponent implements OnInit {
   }
 
   private getFilterType(fieldName: string): string {
-    return (this.metaDataFields && (this.metaDataFields.indexOf(fieldName) > -1)) ?
+    return (this.metadataFields && (this.metadataFields.indexOf(fieldName) > -1)) ?
       WorkbasketComponent.METADATA_FILTER : WorkbasketComponent.CASE_FILTER;
   }
 

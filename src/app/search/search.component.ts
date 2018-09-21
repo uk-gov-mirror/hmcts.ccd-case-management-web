@@ -9,6 +9,8 @@ import { Jurisdiction } from '../shared/domain/definition/jurisdiction.model';
 import { CaseState } from '../shared/domain/definition/case-state.model';
 import { PaginationService } from '../core/pagination/pagination.service';
 import { CaseType } from '../shared/domain/definition/case-type.model';
+import { AlertService } from '../core/alert/alert.service';
+import { plainToClass } from 'class-transformer';
 
 const ATTRIBUTE_SEPERATOR = '.';
 
@@ -27,9 +29,12 @@ export class SearchComponent implements OnInit {
   profile: Profile;
   resultView: SearchResultView;
   paginationMetadata: PaginationMetadata;
-  metaDataFields: string[];
+  metadataFields: string[];
 
-  constructor(private route: ActivatedRoute, private searchService: SearchService, private paginationService: PaginationService) { }
+  constructor(private route: ActivatedRoute,
+              private searchService: SearchService,
+              private paginationService: PaginationService,
+              private alertService: AlertService) { }
 
   ngOnInit() {
     this.profile = this.route.parent.snapshot.data.profile;
@@ -40,7 +45,7 @@ export class SearchComponent implements OnInit {
     const searchParams = {};
 
     this.caseFilterFG = filter.formGroup;
-    this.metaDataFields = filter.metadataFields;
+    this.metadataFields = filter.metadataFields;
 
     if (filter.caseState) {
       paginationParams['state'] = filter.caseState.id;
@@ -65,8 +70,10 @@ export class SearchComponent implements OnInit {
     this.searchService
       .search(filter.jurisdiction.id, filter.caseType.id, metadataFilters, caseFilters)
       .subscribe(resultView => {
-        this.resultView = resultView;
-
+        this.resultView = plainToClass(SearchResultView, resultView);
+        if (this.resultView.result_error) {
+          this.alertService.warning(this.resultView.result_error);
+        }
         this.jurisdiction = filter.jurisdiction;
         this.caseType = filter.caseType;
         this.caseState = filter.caseState;
@@ -112,7 +119,7 @@ export class SearchComponent implements OnInit {
   }
 
   private getFilterType(fieldName: string): string {
-    return (this.metaDataFields && (this.metaDataFields.indexOf(fieldName) > -1)) ?
+    return (this.metadataFields && (this.metadataFields.indexOf(fieldName) > -1)) ?
       SearchComponent.METADATA_FILTER : SearchComponent.CASE_FILTER;
   }
 

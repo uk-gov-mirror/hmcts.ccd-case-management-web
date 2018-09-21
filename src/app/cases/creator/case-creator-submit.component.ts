@@ -7,6 +7,8 @@ import { CaseEventTrigger } from '../../shared/domain/case-view/case-event-trigg
 import { Observable } from 'rxjs/Observable';
 import { CaseEventData } from '../../shared/domain/case-event-data';
 import { EventStatusService } from '../../core/cases/event-status.service';
+import { DraftService } from '../../core/draft/draft.service';
+import { Draft } from '../../shared/domain/draft';
 
 @Component({
   selector: 'ccd-case-creator-submit',
@@ -21,6 +23,7 @@ export class CaseCreatorSubmitComponent implements OnInit {
 
   constructor(
     private casesService: CasesService,
+    private draftService: DraftService,
     private router: Router,
     private alertService: AlertService,
     private route: ActivatedRoute,
@@ -37,11 +40,23 @@ export class CaseCreatorSubmitComponent implements OnInit {
   }
 
   submit(): (sanitizedEditForm: CaseEventData) => Observable<object> {
-    return (sanitizedEditForm: CaseEventData) => this.casesService.createCase(this.jurisdictionId, this.caseTypeId , sanitizedEditForm);
+    return (sanitizedEditForm: CaseEventData) => {
+      sanitizedEditForm.draft_id = this.eventTrigger.case_id;
+      return this.casesService.createCase(this.jurisdictionId, this.caseTypeId, sanitizedEditForm);
+    }
   }
 
   validate(): (sanitizedEditForm: CaseEventData) => Observable<object> {
     return (sanitizedEditForm: CaseEventData) => this.casesService.validateCase(this.jurisdictionId, this.caseTypeId, sanitizedEditForm);
+  }
+
+  saveDraft(): (caseEventData: CaseEventData) => Observable<Draft> {
+    if (this.eventTrigger.can_save_draft) {
+      return (caseEventData: CaseEventData) => this.draftService.createOrUpdateDraft(this.jurisdictionId,
+        this.caseTypeId,
+        this.eventTrigger.case_id,
+        caseEventData);
+    }
   }
 
   submitted(event: any): void {
@@ -52,10 +67,9 @@ export class CaseCreatorSubmitComponent implements OnInit {
       .then(() => {
         let caseReference = this.caseReferencePipe.transform(String(caseId));
         if (EventStatusService.isIncomplete(eventStatus)) {
-          this.alertService.warning(`Case #${caseReference} has been created with event: ${this.eventTrigger.name} `
-            + `but the callback service cannot be completed`);
+          this.alertFailure(eventStatus, caseReference);
         } else {
-          this.alertService.success(`Case #${caseReference} has been created with event: ${this.eventTrigger.name}`);
+          this.alertSuccess(eventStatus, caseReference);
         }
     });
   }
@@ -64,4 +78,26 @@ export class CaseCreatorSubmitComponent implements OnInit {
     return this.router.navigate(['/create/case']);
   }
 
+  private alertSuccess(eventStatus, caseReference) {
+    eventStatus = eventStatus || EventStatusService.CALLBACK_STATUS_COMPLETE;
+    switch (eventStatus) {
+      case EventStatusService.CALLBACK_STATUS_COMPLETE:
+        this.alertService.success(`Case #${caseReference} has been created.`);
+        break;
+      case EventStatusService.DELETE_DRAFT_STATUS_COMPLETE:
+        this.alertService.success(`Case #${caseReference} has been created. The draft has been successfully deleted`);
+        break;
+    }
+  }
+
+  private alertFailure(eventStatus, caseReference) {
+    switch (eventStatus) {
+      case EventStatusService.CALLBACK_STATUS_INCOMPLETE:
+        this.alertService.warning(`Case #${caseReference} has been created but the callback service cannot be completed`);
+        break;
+      case EventStatusService.DELETE_DRAFT_STATUS_INCOMPLETE:
+        this.alertService.warning(`Case #${caseReference} has been created. The draft is placed in a queue and will be deleted shortly`);
+        break;
+    }
+  }
 }

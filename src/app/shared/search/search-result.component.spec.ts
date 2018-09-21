@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SearchResultComponent } from './search-result.component';
-import { Component, DebugElement, Input, SimpleChange, NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, DebugElement, Input, NO_ERRORS_SCHEMA, SimpleChange } from '@angular/core';
 import { SearchResultView } from './search-result-view.model';
 import { RouterTestingModule } from '@angular/router/testing';
 import { By } from '@angular/platform-browser';
@@ -11,13 +11,13 @@ import { Jurisdiction } from '../../shared/domain/definition/jurisdiction.model'
 import { ActivityService } from '../../core/activity/activity.service';
 import { MockComponent } from 'ng2-mock-component';
 import { PaginationMetadata } from './pagination-metadata.model';
-import createSpyObj = jasmine.createSpyObj;
 import { PaginatePipe, PaginationService } from 'ngx-pagination';
 import { CaseState } from '../../shared/domain/definition/case-state.model';
 import { SearchResultViewItem } from './search-result-view-item.model';
 import { AppConfig } from '../../app.config';
 import { CaseType } from '../domain/definition/case-type.model';
 import { FormGroup } from '@angular/forms';
+import createSpyObj = jasmine.createSpyObj;
 
 @Component({
   selector: 'ccd-field-read',
@@ -35,7 +35,8 @@ describe('SearchResultComponent', () => {
     const JURISDICTION: Jurisdiction = {
       id: 'TEST',
       name: 'Test',
-      description: 'Test Jurisdiction'
+      description: 'Test Jurisdiction',
+      caseTypes: []
     };
     const CASE_TYPE: CaseType = {
       id: 'TEST_CASE_TYPE',
@@ -55,6 +56,7 @@ describe('SearchResultComponent', () => {
       total_results_count: 3,
       total_pages_count: 1
     };
+    const METADATA_FIELDS: string[] = ['state'];
     const RESULT_VIEW: SearchResultView = {
       columns: [
         {
@@ -110,7 +112,8 @@ describe('SearchResultComponent', () => {
             PersonAddress: 'Thames Valley Park, Sonning, Reading, England, RG6 1WA'
           }
         }
-      ]
+      ],
+      hasDrafts: () => false
     };
     const STATIC_COLUMNS_COUNT = 1;
 
@@ -177,11 +180,18 @@ describe('SearchResultComponent', () => {
       component.caseState = CASE_STATE;
       component.paginationMetadata = PAGINATION_METADATA;
       component.caseFilterFG = new FormGroup({});
+      component.metadataFields = METADATA_FIELDS;
       component.ngOnChanges({ resultView: new SimpleChange(null, RESULT_VIEW, true) });
 
       de = fixture.debugElement;
       fixture.detectChanges();
     }));
+
+    it('should render pagination header', () => {
+      let pagination = de.query(By.css('div.pagination-top'));
+      expect(pagination).toBeTruthy();
+      expect(pagination.nativeElement.textContent.trim()).toBe('Displaying 1 - 3 out of 3 applications');
+    });
 
     it('should render a table <thead> and <tbody>', () => {
       let table = de.query(By.css('div>table'));
@@ -300,6 +310,7 @@ describe('SearchResultComponent', () => {
                        caseType : CASE_TYPE,
                        caseState : CASE_STATE,
                        formGroup: jasmine.any(Object),
+                       metadataFields: METADATA_FIELDS,
                        page : 2 };
 
       expect(component.selected.page).toBe(2);
@@ -381,7 +392,8 @@ describe('SearchResultComponent', () => {
           order: 1
         }
       ],
-      results: []
+      results: [],
+      hasDrafts: () => false
     };
 
     let fixture: ComponentFixture<SearchResultComponent>;
@@ -496,6 +508,16 @@ describe('SearchResultComponent', () => {
 
       expect(pagination.length).toBeFalsy();
     });
+
+    it('should not display pagination header when no metadata', () => {
+      component.resultView.results.push(new SearchResultViewItem());
+
+      fixture.detectChanges();
+
+      let pagination = de.query(By.css('div.pagination-top'));
+      expect(pagination).toBeFalsy();
+    });
+
   });
 
 });

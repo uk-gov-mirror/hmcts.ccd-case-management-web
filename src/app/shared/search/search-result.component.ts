@@ -1,4 +1,4 @@
-import { Component, Input, Output, OnChanges, SimpleChanges, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { SearchResultView } from './search-result-view.model';
 import { PaginationMetadata } from './pagination-metadata.model';
 import { SearchResultViewColumn } from './search-result-view-column.model';
@@ -6,8 +6,8 @@ import { SearchResultViewItemComparator } from './sorting/search-result-view-ite
 import { SortParameters } from './sorting/sort-parameters';
 import { SortOrder } from './sorting/sort-order';
 import { SearchResultViewItemComparatorFactory } from './sorting/search-result-view-item-comparator-factory';
-import { Jurisdiction } from '../../shared/domain/definition/jurisdiction.model';
-import { CaseState } from '../../shared/domain/definition/case-state.model';
+import { Jurisdiction } from '../domain/definition/jurisdiction.model';
+import { CaseState } from '../domain/definition/case-state.model';
 import { DisplayMode } from '../../core/activity/activity.model';
 import { AppConfig } from '../../app.config';
 import { CaseType } from '../domain/definition/case-type.model';
@@ -48,6 +48,9 @@ export class SearchResultComponent implements OnChanges {
   @Input()
   paginationMetadata: PaginationMetadata;
 
+  @Input()
+  metadataFields: string[];
+
   @Output()
   changePage: EventEmitter<any> = new EventEmitter();
 
@@ -61,6 +64,7 @@ export class SearchResultComponent implements OnChanges {
     caseType?: CaseType,
     caseState?: CaseState,
     formGroup?: FormGroup,
+    metadataFields?: string[],
     page?: number
   } = {};
 
@@ -68,7 +72,8 @@ export class SearchResultComponent implements OnChanges {
   searchResultViewItemComparatorFactory: SearchResultViewItemComparatorFactory;
 
   constructor(searchResultViewItemComparatorFactory: SearchResultViewItemComparatorFactory,
-    appConfig: AppConfig, private activityService: ActivityService) {
+              appConfig: AppConfig,
+              private activityService: ActivityService) {
     this.searchResultViewItemComparatorFactory = searchResultViewItemComparatorFactory;
     this.paginationPageSize = appConfig.getPaginationPageSize();
     this.hideRows = false;
@@ -83,7 +88,8 @@ export class SearchResultComponent implements OnChanges {
       // Clone `resultView` to prevent sorting the external variable
       this.resultView = {
         columns: this.resultView.columns.slice(0),
-        results: this.resultView.results.slice(0)
+        results: this.resultView.results.slice(0),
+        hasDrafts: this.resultView.hasDrafts
       };
 
       this.resultView.columns = this.resultView.columns.sort((a: SearchResultViewColumn, b: SearchResultViewColumn) => {
@@ -102,6 +108,7 @@ export class SearchResultComponent implements OnChanges {
     this.selected.caseType = this.caseType;
     this.selected.caseState = this.caseState;
     this.selected.formGroup = this.caseFilterFG;
+    this.selected.metadataFields = this.metadataFields;
     this.selected.page = page;
     // Apply filters
     this.changePage.emit(this.selected);
@@ -109,6 +116,10 @@ export class SearchResultComponent implements OnChanges {
 
   hasResults(): any {
     return this.resultView.results.length && this.paginationMetadata.total_pages_count;
+  }
+
+  hasDrafts(): boolean {
+    return this.resultView.hasDrafts();
   }
 
   comparator(column: SearchResultViewColumn): SearchResultViewItemComparator {
@@ -150,5 +161,15 @@ export class SearchResultComponent implements OnChanges {
       }
     }
     return isAscending ? SortOrder.ASCENDING : isDescending ? SortOrder.DESCENDING : SortOrder.UNSORTED;
+  }
+
+  getFirstResult(): number {
+    const currentPage = (this.selected.page ? this.selected.page : 1);
+    return ( (currentPage - 1) * this.paginationPageSize ) + 1
+  }
+
+  getLastResult(): number {
+    const currentPage = (this.selected.page ? this.selected.page : 1);
+    return ( (currentPage - 1) * this.paginationPageSize ) + this.resultView.results.length;
   }
 }

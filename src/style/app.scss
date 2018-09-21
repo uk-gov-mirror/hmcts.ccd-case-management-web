@@ -91,7 +91,36 @@ table.form-table {
     background: #cecccc;
   }
 }
-
+.tooltip {
+  position: relative;
+  text-decoration: underline;
+}
+.tooltip .tooltiptext {
+  visibility: hidden;
+  background-color: #005ea5;
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px 15px;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  left: 0%;
+}
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #005ea5 transparent transparent transparent;
+}
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
 .ccd-error-summary-li {
   margin-left: 40px;
 }
@@ -126,11 +155,11 @@ select::-ms-expand {
 .search-left {
   float: left;
   padding-left: 15px;
-  width: 19%;
+  width: 17%;
 }
 .search-right {
   float: right;
-  width: 77%;
+  width: 80%;
   padding-right: 15px;
   box-sizing: border-box;
 }
@@ -141,9 +170,6 @@ select::-ms-expand {
 .heading-small {
   margin-top: 30px;
   margin-bottom: 20px;
-}
-.heading-medium {
-  margin-top: 45px;
 }
 .heading-17 {
   font-size: 17px;
@@ -185,6 +211,7 @@ select::-ms-expand {
 }
 .text-16, .error-message {
   font-size: 16px;
+  font-family: "nta", Arial, sans-serif;
 }
 .postcodeinput {
   width: 49%;
@@ -204,4 +231,19 @@ select::-ms-expand {
   position:absolute;
   width:50%;
   height:41px;
+}
+.footer-menu {
+  float: left;
+  margin-bottom: 30px;
+  padding-right: 30px;
+  font-size: 16px;
+}
+.label-text {
+  font-size: 16px;
+  font-family: "nta", Arial, sans-serif;
+  font-weight: bold;
+}
+.pagination-top {
+  float: left;
+  margin-bottom: 10px;
 }
