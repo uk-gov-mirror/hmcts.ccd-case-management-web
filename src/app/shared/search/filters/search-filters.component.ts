@@ -109,7 +109,7 @@ export class SearchFiltersComponent implements OnInit {
 
   send(query) {
     console.log('query:', query)
-    this.searchService.query(this.selected.caseType.id.toLowerCase(), query);
+    this.searchService.query(this.selected.caseType.id, query);
   }
 
   private selectCaseType(caseTypes: CaseType[]) {
