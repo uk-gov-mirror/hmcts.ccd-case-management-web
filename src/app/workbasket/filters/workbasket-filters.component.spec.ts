@@ -175,13 +175,14 @@ describe('WorkbasketFiltersComponent', () => {
       workbasketHandler = createSpyObj('workbasketHandler', ['applyFilters']);
       router = createSpyObj<Router>('router', ['navigate']);
       router.navigate.and.returnValue(Promise.resolve('someResult'));
-      alertService = createSpyObj<AlertService>('alertService', ['setPreserveAlerts']);
+      alertService = createSpyObj<AlertService>('alertService', ['isPreserveAlerts', 'setPreserveAlerts']);
       orderService = createSpyObj('orderService', ['sortAsc']);
       workbasketInputFilterService = createSpyObj<WorkbasketInputFilterService>('workbasketInputFilterService', ['getWorkbasketInputs']);
       workbasketInputFilterService.getWorkbasketInputs.and.returnValue(createObservableFrom(TEST_WORKBASKET_INPUTS));
       jurisdictionService = new JurisdictionService();
       windowService = new WindowService();
-      windowService.setLocalStorage("workbasket-filter-form-group-value", "{\"PersonLastName\":null,\"PersonFirstName\":\"CaseFirstName\",\"PersonAddress\":{\"AddressLine1\":null,\"AddressLine2\":null,\"AddressLine3\":null,\"PostTown\":null,\"County\":null,\"PostCode\":null,\"Country\":null}}")
+      windowService.setLocalStorage('workbasket-filter-form-group-value',
+        '{\"PersonLastName\":null,\"PersonFirstName\":\"CaseFirstName\",\"PersonAddress\":{\"AddressLine1\":null,\"AddressLine2\":null,\"AddressLine3\":null,\"PostTown\":null,\"County\":null,\"PostCode\":null,\"Country\":null}}')
       resetCaseTypes(JURISDICTION_2, CASE_TYPES_2);
       activatedRoute = {
         queryParams: Observable.of({}),
@@ -499,8 +500,8 @@ describe('WorkbasketFiltersComponent', () => {
       workbasketHandler = createSpyObj('workbasketHandler', ['applyFilters']);
       router = createSpyObj<Router>('router', ['navigate']);
       router.navigate.and.returnValue(Promise.resolve('someResult'));
+      alertService = createSpyObj<AlertService>('alertService', ['isPreserveAlerts', 'setPreserveAlerts']);
       resetCaseTypes(JURISDICTION_2, CRUD_FILTERED_CASE_TYPES);
-      alertService = createSpyObj<AlertService>('alertService', ['setPreserveAlerts']);
       orderService = createSpyObj('orderService', ['sortAsc']);
       workbasketInputFilterService = createSpyObj<WorkbasketInputFilterService>('workbasketInputFilterService', ['getWorkbasketInputs']);
       workbasketInputFilterService.getWorkbasketInputs.and.returnValue(createObservableFrom(TEST_WORKBASKET_INPUTS));
@@ -594,8 +595,8 @@ describe('WorkbasketFiltersComponent', () => {
       workbasketHandler = createSpyObj('workbasketHandler', ['applyFilters']);
       router = createSpyObj<Router>('router', ['navigate']);
       router.navigate.and.returnValue(Promise.resolve('someResult'));
+      alertService = createSpyObj<AlertService>('alertService', ['isPreserveAlerts', 'setPreserveAlerts']);
       resetCaseTypes(JURISDICTION_2, EMPTY_CASE_TYPES);
-      alertService = createSpyObj<AlertService>('alertService', ['setPreserveAlerts']);
       orderService = createSpyObj('orderService', ['sortAsc']);
       workbasketInputFilterService = createSpyObj<WorkbasketInputFilterService>('workbasketInputFilterService', ['getWorkbasketInputs']);
       workbasketInputFilterService.getWorkbasketInputs.and.returnValue(createObservableFrom(TEST_WORKBASKET_INPUTS));
@@ -667,8 +668,8 @@ describe('WorkbasketFiltersComponent', () => {
       workbasketHandler = createSpyObj('workbasketHandler', ['applyFilters']);
       router = createSpyObj<Router>('router', ['navigate']);
       router.navigate.and.returnValue(Promise.resolve('someResult'));
+      alertService = createSpyObj<AlertService>('alertService', ['isPreserveAlerts', 'setPreserveAlerts']);
       resetCaseTypes(JURISDICTION_2, CASE_TYPE_WITH_EMPTY_STATES);
-      alertService = createSpyObj<AlertService>('alertService', ['setPreserveAlerts']);
       orderService = createSpyObj('orderService', ['sortAsc']);
       windowService = new WindowService();
       windowService.setLocalStorage("workbasket-filter-form-group-value", "{\"PersonLastName\":null,\"PersonFirstName\":\"CaseFirstName\",\"PersonAddress\":{\"AddressLine1\":null,\"AddressLine2\":null,\"AddressLine3\":null,\"PostTown\":null,\"County\":null,\"PostCode\":null,\"Country\":null}}");
@@ -752,9 +753,9 @@ describe('WorkbasketFiltersComponent', () => {
       orderService = createSpyObj('orderService', ['sortAsc']);
       workbasketInputFilterService = createSpyObj<WorkbasketInputFilterService>('workbasketInputFilterService', ['getWorkbasketInputs']);
       workbasketInputFilterService.getWorkbasketInputs.and.returnValue(createObservableFrom(TEST_WORKBASKET_INPUTS));
+      alertService = createSpyObj<AlertService>('alertService', ['isPreserveAlerts', 'setPreserveAlerts']);
       windowService = new WindowService();
       windowService.setLocalStorage("workbasket-filter-form-group-value", "{\"PersonLastName\":null,\"PersonFirstName\":\"CaseFirstName\",\"PersonAddress\":{\"AddressLine1\":null,\"AddressLine2\":null,\"AddressLine3\":null,\"PostTown\":null,\"County\":null,\"PostCode\":null,\"Country\":null}}")
-      alertService = createSpyObj<AlertService>('alertService', ['setPreserveAlerts']);
       activatedRoute = {
         queryParams: Observable.of(QUERY_PARAMS),
         snapshot: {
@@ -841,8 +842,8 @@ describe('WorkbasketFiltersComponent', () => {
       workbasketHandler = createSpyObj('workbasketHandler', ['applyFilters']);
       router = createSpyObj<Router>('router', ['navigate']);
       router.navigate.and.returnValue(Promise.resolve('someResult'));
+      alertService = createSpyObj<AlertService>('alertService', ['isPreserveAlerts', 'setPreserveAlerts']);
       resetCaseTypes(JURISDICTION_2, EMPTY_CASE_TYPES);
-      alertService = createSpyObj<AlertService>('alertService', ['setPreserveAlerts']);
       orderService = createSpyObj('orderService', ['sortAsc']);
       workbasketInputFilterService = createSpyObj<WorkbasketInputFilterService>('workbasketInputFilterService', ['getWorkbasketInputs']);
       workbasketInputFilterService.getWorkbasketInputs.and.returnValue(createObservableFrom(TEST_WORKBASKET_INPUTS));
