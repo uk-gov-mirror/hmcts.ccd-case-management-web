@@ -37,12 +37,12 @@ withNightlyPipeline(type, product, app) {
 
     enableSlackNotifications('#ccd-nightly-builds')
 
+    setVaultName('ccd')
+    loadVaultSecrets(secrets)
+
     if (params.RUN_XBROWSER) {
         enableCrossBrowserTest()
     }
-
-    setVaultName('ccd')
-    loadVaultSecrets(secrets)
 
     env.TEST_URL = params.TEST_URL_PARAM
 
