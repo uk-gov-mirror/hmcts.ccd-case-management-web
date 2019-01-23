@@ -40,18 +40,27 @@ export class ActivityPollingService {
       this.pendingRequests.set(caseId, subject);
     }
     if (this.pendingRequests.size === 1) {
+      console.log('debugging IN angular zone:')
+      console.log(NgZone.isInAngularZone())
       this.ngZone.runOutsideAngular(() => {
 
+        console.log('debugging OUT angular zone:')
+        console.log(NgZone.isInAngularZone())
         this.currentTimeoutHandle = setTimeout(
 
           () => this.ngZone.run(() => {
             // console.log('timeout: flushing requests')
+            console.log('debugging explicit back IN angular zone:')
+            console.log(NgZone.isInAngularZone())
             this.flushRequests();
           }),
 
           this.batchCollectionDelayMs);
 
       });
+
+      console.log('debugging should finally be normal and IN angular zone:')
+      console.log(NgZone.isInAngularZone())
     }
 
     if (this.pendingRequests.size >= this.maxRequestsPerBatch) {
@@ -83,7 +92,7 @@ export class ActivityPollingService {
       return Observable.empty();
     }
 
-    return polling(this.activityService.getActivities(...caseIds), this.pollConfig);
+    polling(this.activityService.getActivities(...caseIds), this.pollConfig);
   }
 
   protected performBatchRequest(requests: Map<string, Subject<Activity>>): void {
@@ -91,6 +100,24 @@ export class ActivityPollingService {
     // console.log('issuing batch request for cases: ' + caseIds);
     this.pollActivitiesSubscription = this.pollActivities(caseIds).subscribe(
       (activities: Activity[]) => {
+        activities.forEach((activity) => {
+          // console.log('pushing activity: ' + activity.caseId);
+          requests.get(activity.caseId).next(activity);
+        });
+      },
+      (err) => {
+        console.log('error: ' + err);
+        Array.from(requests.values()).forEach((subject) => subject.error(err));
+      }
+    );
+  }
+
+  protected performBatchRequest2(requests: Map<string, Subject<Activity>>): void {
+    const caseIds = Array.from(requests.keys()).join();
+    // console.log('issuing batch request for cases: ' + caseIds);
+
+    polling(this.activityService.getActivities(caseIds), this.pollConfig)
+      .subscribe((activities: Activity[]) => {
         activities.forEach((activity) => {
           // console.log('pushing activity: ' + activity.caseId);
           requests.get(activity.caseId).next(activity);
