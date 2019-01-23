@@ -20,12 +20,12 @@ exports.config = {
     'marionette': false,
     'browserName': 'chrome',
 
-    'proxy': {
-      'proxyType': 'manual',
-      'httpProxy': 'proxyout.reform.hmcts.net:8080',
-      'sslProxy': 'proxyout.reform.hmcts.net:8080',
-      'noProxy': ''
-    },
+    // 'proxy': {
+    //   'proxyType': 'manual',
+    //   'httpProxy': 'proxyout.reform.hmcts.net:8080',
+    //   'sslProxy': 'proxyout.reform.hmcts.net:8080',
+    //   'noProxy': ''
+    // },
   },
 
   cucumberOpts: {

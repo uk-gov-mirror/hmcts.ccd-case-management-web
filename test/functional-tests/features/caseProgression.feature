@@ -13,6 +13,7 @@ Feature: Set of scenarios to test case creation and case progression
       | progress to state1   |
       | update current state |
 
+    @case
   Scenario: Case can be progressed
     Given I have navigated to a case in the state 'Case created'
     When I select and submit the event 'progress to state1'
