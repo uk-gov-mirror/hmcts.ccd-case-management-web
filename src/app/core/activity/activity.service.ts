@@ -17,10 +17,15 @@ export class ActivityService {
   constructor(private http: HttpService, private appConfig: AppConfig) {}
 
   getActivities(...caseId: string[]): Observable<Activity[]> {
+    console.log(`### debuggging getActivities: caseids:  + ${caseId.join(',')}`)
     const url = this.activityUrl() + `/cases/${caseId.join(',')}/activity`;
     return this.http
       .get(url, null, false)
-      .map(response => response.json());
+      .map(response => {
+        console.log('response:')
+        console.log(response.json())
+        return response.json()
+      });
   }
 
   postActivity(caseId: string, activityType: String): Observable<Activity[]> {

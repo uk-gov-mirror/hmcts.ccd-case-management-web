@@ -10,6 +10,7 @@ import { CaseField, ShowCondition, Draft, HttpError, OrderService, CaseView,
   CaseViewTrigger, DeleteOrCancelDialogComponent, DRAFT_QUERY_PARAM,
   AlertService, CallbackErrorsContext, DraftService} from '@hmcts/ccd-case-ui-toolkit';
 import { MatDialog, MatDialogConfig } from '@angular/material';
+import { NgZone } from '@angular/core';
 
 @Component({
   templateUrl: './case-viewer.component.html',
@@ -36,6 +37,7 @@ export class CaseViewerComponent implements OnInit, OnDestroy {
   callbackErrorsSubject: Subject<any> = new Subject();
 
   constructor(
+    private ngZone: NgZone,
     private route: ActivatedRoute,
     private router: Router,
     private orderService: OrderService,
@@ -57,8 +59,10 @@ export class CaseViewerComponent implements OnInit, OnDestroy {
 
     this.sortedTabs = this.sortTabFieldsAndFilterTabs(this.sortedTabs);
 
-    this.subscription = this.postViewActivity().subscribe((_resolved) => {
-      // console.log('Posted VIEW activity and result is: ' + JSON.stringify(resolved));
+    this.ngZone.runOutsideAngular( () => {
+      this.subscription = this.postViewActivity().subscribe((_resolved) => {
+        console.log('Posted VIEW activity and result is: ' + JSON.stringify(_resolved));
+      });
     });
     if (document.getElementById('main-content')) {
       document.getElementById('main-content').focus();
@@ -66,7 +70,9 @@ export class CaseViewerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.ngZone.runOutsideAngular( () => {
+      this.subscription.unsubscribe();
+    });
   }
 
   postViewActivity(): Observable<Activity[]> {

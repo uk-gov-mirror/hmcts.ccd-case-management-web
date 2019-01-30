@@ -45,6 +45,7 @@ class CaseDetailsPage extends BasePage {
    * @returns {Promise<void>}
    */
   async startEvent(event){
+    await browser.driver.sleep(20000)
     await this._actionsDropdown.selectFromDropdownByText(event);
     await this._goButton.click()
   }

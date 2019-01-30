@@ -6,6 +6,7 @@ import { Activity, DisplayMode } from '../../core/activity/activity.model';
 import { Subscription } from 'rxjs/Subscription';
 import { EventStatusService } from '../../core/cases/event-status.service';
 import { ActivityPollingService } from '../../core/activity/activity.polling.service';
+import { NgZone } from '@angular/core';
 
 @Component({
   selector: 'ccd-case-event-trigger',
@@ -18,6 +19,7 @@ export class CaseEventTriggerComponent implements OnInit, OnDestroy {
   subscription: Subscription;
 
   constructor(
+    private ngZone: NgZone,
     private casesService: CasesService,
     private router: Router,
     private alertService: AlertService,
@@ -29,17 +31,21 @@ export class CaseEventTriggerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.caseDetails = this.route.snapshot.data.case;
     this.eventTrigger = this.route.snapshot.data.eventTrigger;
-    this.subscription = this.postEditActivity().subscribe((_resolved) => {
-      // console.log('Posted EDIT activity and result is: ' + JSON.stringify(resolved));
+    this.ngZone.runOutsideAngular( () => {
+      this.subscription = this.postEditActivity().subscribe((_resolved) => {
+        console.log('Posted EDIT activity and result is: ' + JSON.stringify(_resolved));
+      });
     });
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.ngZone.runOutsideAngular( () => {
+      this.subscription.unsubscribe();
+    });
   }
 
   postEditActivity(): Observable<Activity[]> {
-    return this.activityPollingService.postEditActivity(this.caseDetails.case_id);
+      return this.activityPollingService.postEditActivity(this.caseDetails.case_id);
   }
 
   submit(): (sanitizedEditForm: CaseEventData) => Observable<object> {

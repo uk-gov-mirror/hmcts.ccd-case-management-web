@@ -27,6 +27,7 @@ export class ActivityPollingService {
   }
 
   subscribeToActivity(caseId: string, done: (activity: Activity) => void): Subject<Activity> {
+    console.log('### debugging subscribeToActivity')
     if (!this.isEnabled) {
       return new Subject<Activity>();
     }
@@ -40,37 +41,26 @@ export class ActivityPollingService {
       this.pendingRequests.set(caseId, subject);
     }
     if (this.pendingRequests.size === 1) {
-      console.log('debugging IN angular zone:')
-      console.log(NgZone.isInAngularZone())
       this.ngZone.runOutsideAngular(() => {
 
-        console.log('debugging OUT angular zone:')
-        console.log(NgZone.isInAngularZone())
         this.currentTimeoutHandle = setTimeout(
-
           () => this.ngZone.run(() => {
-            // console.log('timeout: flushing requests')
-            console.log('debugging explicit back IN angular zone:')
-            console.log(NgZone.isInAngularZone())
+            console.log('timeout: flushing requests')
             this.flushRequests();
           }),
-
           this.batchCollectionDelayMs);
-
       });
-
-      console.log('debugging should finally be normal and IN angular zone:')
-      console.log(NgZone.isInAngularZone())
     }
 
     if (this.pendingRequests.size >= this.maxRequestsPerBatch) {
-      // console.log('max pending hit: flushing requests');
+      console.log('max pending hit: flushing requests');
       this.flushRequests();
     }
     return subject;
   }
 
   stopPolling() {
+    console.log('##DEBUG: stopping polling')
     if (this.pollActivitiesSubscription) {
       this.pollActivitiesSubscription.unsubscribe();
     }
@@ -92,48 +82,35 @@ export class ActivityPollingService {
       return Observable.empty();
     }
 
-    polling(this.activityService.getActivities(...caseIds), this.pollConfig);
+    return polling(this.activityService.getActivities(...caseIds), this.pollConfig);
   }
 
   protected performBatchRequest(requests: Map<string, Subject<Activity>>): void {
     const caseIds = Array.from(requests.keys()).join();
-    // console.log('issuing batch request for cases: ' + caseIds);
-    this.pollActivitiesSubscription = this.pollActivities(caseIds).subscribe(
-      (activities: Activity[]) => {
-        activities.forEach((activity) => {
-          // console.log('pushing activity: ' + activity.caseId);
-          requests.get(activity.caseId).next(activity);
-        });
-      },
-      (err) => {
-        console.log('error: ' + err);
-        Array.from(requests.values()).forEach((subject) => subject.error(err));
-      }
-    );
+    console.log('issuing batch request for cases: ' + caseIds);
+
+    this.ngZone.runOutsideAngular( () => {
+      this.pollActivitiesSubscription = this.pollActivities(caseIds).subscribe(
+        (activities: Activity[]) => {
+          activities.forEach((activity) => {
+            console.log('pushing activity: ' + activity.caseId);
+            requests.get(activity.caseId).next(activity);
+          });
+        },
+        (err) => {
+          console.log('error: ' + err);
+          Array.from(requests.values()).forEach((subject) => subject.error(err));
+        }
+      )
+    })
   }
 
-  protected performBatchRequest2(requests: Map<string, Subject<Activity>>): void {
-    const caseIds = Array.from(requests.keys()).join();
-    // console.log('issuing batch request for cases: ' + caseIds);
-
-    polling(this.activityService.getActivities(caseIds), this.pollConfig)
-      .subscribe((activities: Activity[]) => {
-        activities.forEach((activity) => {
-          // console.log('pushing activity: ' + activity.caseId);
-          requests.get(activity.caseId).next(activity);
-        });
-      },
-      (err) => {
-        console.log('error: ' + err);
-        Array.from(requests.values()).forEach((subject) => subject.error(err));
-      }
-    );
-  }
-
+  // called from CaseViewerComponent
   postViewActivity(caseId: string): Observable<Activity[]> {
     return this.postActivity(caseId, ActivityService.ACTIVITY_VIEW);
   }
 
+  // called from CaseEventTriggerComponent
   postEditActivity(caseId: string): Observable<Activity[]> {
     return this.postActivity(caseId, ActivityService.ACTIVITY_EDIT);
   }
@@ -143,10 +120,32 @@ export class ActivityPollingService {
       return Observable.empty();
     }
 
-    return polling(this.activityService.postActivity(caseId, activityType), this.pollConfig);
+    // this.ngZone.runOutsideAngular( () => {
+      return polling(this.activityService.postActivity(caseId, activityType), this.pollConfig);
+    // })
   }
 
   get isEnabled(): boolean {
     return this.activityService.isEnabled;
   }
+
+  // protected performBatchRequest2(requests: Map<string, Subject<Activity>>): void {
+  //   const caseIds = Array.from(requests.keys()).join();
+  //   // console.log('issuing batch request for cases: ' + caseIds);
+  //
+  //   this.ngZone.runOutsideAngular( () => {
+  //     polling(this.activityService.getActivities(caseIds), this.pollConfig)
+  //       .subscribe((activities: Activity[]) => {
+  //         activities.forEach((activity) => {
+  //           // console.log('pushing activity: ' + activity.caseId);
+  //           requests.get(activity.caseId).next(activity);
+  //         });
+  //       },
+  //       (err) => {
+  //         console.log('error: ' + err);
+  //         Array.from(requests.values()).forEach((subject) => subject.error(err));
+  //       }pa
+  //     );
+  //   })
+  // }
 }
