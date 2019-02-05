@@ -70,9 +70,7 @@ export class CaseViewerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.ngZone.runOutsideAngular( () => {
       this.subscription.unsubscribe();
-    });
   }
 
   postViewActivity(): Observable<Activity[]> {

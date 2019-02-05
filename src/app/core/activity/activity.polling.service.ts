@@ -78,11 +78,12 @@ export class ActivityPollingService {
   }
 
   pollActivities(...caseIds: string[]): Observable<Activity[]> {
+    console.log('pollActivities has been called');
     if (!this.isEnabled) {
       return Observable.empty();
     }
 
-    return polling(this.activityService.getActivities(...caseIds), this.pollConfig);
+    return polling(this.activityService.getActivities(...caseIds) , this.pollConfig);
   }
 
   protected performBatchRequest(requests: Map<string, Subject<Activity>>): void {
@@ -90,7 +91,8 @@ export class ActivityPollingService {
     console.log('issuing batch request for cases: ' + caseIds);
 
     this.ngZone.runOutsideAngular( () => {
-      this.pollActivitiesSubscription = this.pollActivities(caseIds).subscribe(
+      console.log('running outside angular zone')
+        this.pollActivitiesSubscription = this.pollActivities(caseIds).subscribe(
         (activities: Activity[]) => {
           activities.forEach((activity) => {
             console.log('pushing activity: ' + activity.caseId);
@@ -120,32 +122,10 @@ export class ActivityPollingService {
       return Observable.empty();
     }
 
-    // this.ngZone.runOutsideAngular( () => {
-      return polling(this.activityService.postActivity(caseId, activityType), this.pollConfig);
-    // })
+    return polling(this.activityService.postActivity(caseId, activityType), this.pollConfig);
   }
 
   get isEnabled(): boolean {
     return this.activityService.isEnabled;
   }
-
-  // protected performBatchRequest2(requests: Map<string, Subject<Activity>>): void {
-  //   const caseIds = Array.from(requests.keys()).join();
-  //   // console.log('issuing batch request for cases: ' + caseIds);
-  //
-  //   this.ngZone.runOutsideAngular( () => {
-  //     polling(this.activityService.getActivities(caseIds), this.pollConfig)
-  //       .subscribe((activities: Activity[]) => {
-  //         activities.forEach((activity) => {
-  //           // console.log('pushing activity: ' + activity.caseId);
-  //           requests.get(activity.caseId).next(activity);
-  //         });
-  //       },
-  //       (err) => {
-  //         console.log('error: ' + err);
-  //         Array.from(requests.values()).forEach((subject) => subject.error(err));
-  //       }pa
-  //     );
-  //   })
-  // }
 }

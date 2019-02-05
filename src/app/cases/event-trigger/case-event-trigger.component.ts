@@ -39,9 +39,7 @@ export class CaseEventTriggerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.ngZone.runOutsideAngular( () => {
       this.subscription.unsubscribe();
-    });
   }
 
   postEditActivity(): Observable<Activity[]> {
