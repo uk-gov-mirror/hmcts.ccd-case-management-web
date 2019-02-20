@@ -92,19 +92,35 @@ export class ActivityPollingService {
 
     this.ngZone.runOutsideAngular( () => {
       console.log('running outside angular zone')
-        this.pollActivitiesSubscription = this.pollActivities(caseIds).subscribe(
-        (activities: Activity[]) => {
-          activities.forEach((activity) => {
-            console.log('pushing activity: ' + activity.caseId);
-            requests.get(activity.caseId).next(activity);
-          });
-        },
-        (err) => {
-          console.log('error: ' + err);
-          Array.from(requests.values()).forEach((subject) => subject.error(err));
-        }
+      this.pollActivitiesSubscription = this.pollActivities(caseIds).subscribe(
+  (activities: Activity[]) => this.ngZone.run( () => {
+          // (activities: Activity[]) =>  {
+            activities.forEach((activity) => {
+              console.log('pushing activity: ' + activity.caseId);
+              requests.get(activity.caseId).next(activity);
+            });
+          },
+          (err) => {
+            console.log('error: ' + err);
+            Array.from(requests.values()).forEach((subject) => subject.error(err));
+          }
+        )
       )
     })
+
+  //     this.pollActivitiesSubscription = this.pollActivities(caseIds).subscribe(
+  // (activities: Activity[]) => {
+  //         // (activities: Activity[]) =>  {
+  //           activities.forEach((activity) => {
+  //             console.log('pushing activity: ' + activity.caseId);
+  //             requests.get(activity.caseId).next(activity);
+  //           });
+  //         },
+  //         (err) => {
+  //           console.log('error: ' + err);
+  //           Array.from(requests.values()).forEach((subject) => subject.error(err));
+  //         }
+  //     )
   }
 
   // called from CaseViewerComponent
