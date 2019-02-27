@@ -27,7 +27,7 @@ class LoginPage extends BasePage {
       let currentURL = await browser.getCurrentUrl();
       let errorMessage = `Failed to load page, Expected URL fragment: ${selfUrlPath} | Actual URL: ${currentURL}`;
 
-      await browser.wait(EC.urlContains(selfUrlPath),30000)
+      await browser.wait(EC.urlContains(selfUrlPath),60000)
         .catch(err => console.log(errorMessage));
 
       //return new instance of the login page
