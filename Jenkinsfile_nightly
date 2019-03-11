@@ -54,4 +54,8 @@ withNightlyPipeline(type, product, app) {
         sh "yarn cache clean"
     }
 
+    before('securitychecks') {
+        sh 'yarn test:audit'
+    }
+
 }

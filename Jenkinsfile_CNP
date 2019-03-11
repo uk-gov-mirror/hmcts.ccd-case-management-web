@@ -54,6 +54,10 @@ withPipeline("angular", product, component) {
         sh "yarn cache clean"
     }
 
+    before('securitychecks') {
+        sh 'yarn test:audit'
+    }
+
     after('functionalTest:aat'){
         publishHTML(target:[
             reportDir            : "test/results/",
