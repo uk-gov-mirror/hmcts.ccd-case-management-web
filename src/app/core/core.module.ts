@@ -20,6 +20,8 @@ import { ContactUsComponent } from '../footer-nav/contact-us.component';
 import { AccordionComponent } from '../shared/accordion/accordion.component';
 import { CcdBrowserSupportComponent } from './ccd-browser-support/ccd-browser-support.component';
 import { DeviceDetectorModule } from 'ngx-device-detector';
+import { DocumentViewerModule } from '@hmcts/document-viewer-webcomponent';
+import { BrowserTransferStateModule } from '@angular/platform-browser';
 
 @NgModule({
   imports: [
@@ -27,6 +29,8 @@ import { DeviceDetectorModule } from 'ngx-device-detector';
     RouterModule,
     AlertModule,
     CaseUIToolkitModule,
+    DocumentViewerModule,
+    BrowserTransferStateModule,
     DeviceDetectorModule.forRoot()
   ],
   providers: [
