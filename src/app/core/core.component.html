@@ -11,8 +11,7 @@
                 (signOutRequest)='signOut()'>
 
   <!-- Header menu : Start -->
-  <!-- "true" condition is placeholder whether to display header menu or not -->
-  <div *ngIf="true" headerNavigation>
+  <div headerNavigation>
     <ul id="proposition-links">
       <li>
         <a [routerLink]="'/list/case'">Case List</a>
@@ -70,33 +69,9 @@
 
 <!-- Main area : Start -->
 <a id="main-content" href="javascript:void(0);"></a>
+<a [routerLink]="'/docu/sorry'" target="_blank">Doc Viewer</a>
 <div class="container-fluid">
   <ccd-alert></ccd-alert>
-<!--0
-  <app-document-viewer
-    [url]="'http://content.tfl.gov.uk/standard-tube-map.pdf'"
-    [contentType]="'pdf'"
-    [isDM]="true"
-    [annotate]="true"
-    [rotate]="true">
-  </app-document-viewer>
-  1
-  <app-document-viewer
-    [url]="'http://localhost:3451/assets/non-dm.pdf'"
-    [contentType]="'pdf'"
-    [isDM]="false"
-    [annotate]="true"
-    [rotate]="true">
-  </app-document-viewer>
-  2
-  <app-document-viewer
-    [url]="'http://localhost:3451/assets/non-dm.jpg'"
-    [contentType]="'image'"
-    [isDM]="false"
-    [annotate]="true"
-    [rotate]="true">
-  </app-document-viewer>-->
-
   <router-outlet></router-outlet>
   <div class="block-wrapper">
     <div class="block mt-xl"></div>

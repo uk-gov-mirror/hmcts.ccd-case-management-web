@@ -26,6 +26,10 @@ const routes: Routes = [
     ],
   },
   {
+    path: 'docu/:url',
+    component: DocuComponent,
+  },
+  {
     path: '',
     component: CoreComponent,
     canActivate: [
@@ -77,7 +81,6 @@ const routes: Routes = [
       { path: 'privacy-policy', component: PrivacyComponent },
       { path: 'terms-and-conditions', component: TcComponent },
       { path: 'contact-us', component: ContactUsComponent },
-      { path: 'docu', component: DocuComponent },
     ]
   }
 ];

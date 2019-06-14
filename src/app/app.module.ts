@@ -19,6 +19,8 @@ import { OAuth2RedirectModule } from './oauth2/oauth2-redirect.module';
 import { AppConfigGuard } from './app.config.guard';
 import { AbstractAppConfig, ActivityModule } from '@hmcts/ccd-case-ui-toolkit';
 import { DocuComponent } from './docu/docu.component';
+import { MediaViewerModule } from '@hmcts/media-viewer';
+import { DocumentViewerModule } from '@hmcts/document-viewer-webcomponent';
 
 @NgModule({
   imports: [
@@ -34,6 +36,8 @@ import { DocuComponent } from './docu/docu.component';
     SharedModule,
     OAuth2RedirectModule,
     ActivityModule,
+    MediaViewerModule,
+    DocumentViewerModule,
   ],
   declarations: [
     AppComponent,

@@ -41,6 +41,10 @@ export class CoreComponent implements OnInit, OnDestroy {
     );
   }
 
+  getURL(): string {
+    return 'http://localhost:3451/assets/non-dm.pdf';
+  }
+
   getSmartSurveyUrl(): string {
     return this.appConfig.getSmartSurveyUrl();
   }
@@ -54,7 +58,8 @@ export class CoreComponent implements OnInit, OnDestroy {
   }
 
   isSolicitor(): boolean {
-    return this.profile.isSolicitor();
+    // return this.profile.isSolicitor();
+    return false;
   }
 
   isCourtAdmin(): boolean {
