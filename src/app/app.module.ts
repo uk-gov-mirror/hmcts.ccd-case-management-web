@@ -18,7 +18,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { OAuth2RedirectModule } from './oauth2/oauth2-redirect.module';
 import { AppConfigGuard } from './app.config.guard';
 import { AbstractAppConfig, ActivityModule } from '@hmcts/ccd-case-ui-toolkit';
-import { DocuComponent } from './docu/docu.component';
+import { DocViewerComponent } from './docu/doc-viewer.component';
 import { MediaViewerModule } from '@hmcts/media-viewer';
 import { DocumentViewerModule } from '@hmcts/document-viewer-webcomponent';
 
@@ -41,7 +41,7 @@ import { DocumentViewerModule } from '@hmcts/document-viewer-webcomponent';
   ],
   declarations: [
     AppComponent,
-    DocuComponent,
+    DocViewerComponent,
     ErrorComponent
   ],
   providers: [
