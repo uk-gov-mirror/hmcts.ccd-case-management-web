@@ -14,17 +14,12 @@ import { CasesModule } from './cases/cases.module';
 import { AppConfig } from './app.config';
 import { ErrorComponent } from './error/error.component';
 import { SharedModule } from './shared/shared.module';
-import { isPlatformBrowser, APP_BASE_HREF, LocationStrategy } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import { OAuth2RedirectModule } from './oauth2/oauth2-redirect.module';
 import { AppConfigGuard } from './app.config.guard';
 import { AbstractAppConfig, ActivityModule } from '@hmcts/ccd-case-ui-toolkit';
-
-export function getBaseHref(locationStrategy: LocationStrategy): string {
-  console.log(locationStrategy.getBaseHref());
-  console.log(locationStrategy.path);
-  console.log(locationStrategy.prepareExternalUrl(''));
-  return locationStrategy.getBaseHref();
-}
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { RequestInterceptor } from './core/interceptor/requestinterceptor';
 
 @NgModule({
   imports: [
@@ -39,7 +34,8 @@ export function getBaseHref(locationStrategy: LocationStrategy): string {
     CasesModule,
     SharedModule,
     OAuth2RedirectModule,
-    ActivityModule
+    ActivityModule,
+    HttpClientModule
   ],
   declarations: [
     AppComponent,
@@ -47,9 +43,9 @@ export function getBaseHref(locationStrategy: LocationStrategy): string {
   ],
   providers: [
     {
-      provide: APP_BASE_HREF,
-      useFactory: getBaseHref,
-      deps: [LocationStrategy]
+      provide: HTTP_INTERCEPTORS,
+      useClass: RequestInterceptor,
+      multi: true
     },
     AppConfig,
     AppConfigGuard,

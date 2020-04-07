@@ -12,18 +12,14 @@ export class AppConfig extends AbstractAppConfig {
 
   protected config: Config;
 
-  constructor(private http: Http, @Inject(APP_BASE_HREF) private baseHref: string) {
+  constructor(private http: Http) {
     super();
   }
 
   public load(): Promise<void> {
     console.log('Loading app config...');
 
-    console.log('Origin URL ' + this.baseHref);
     let configUrl = environment.configUrl;
-    if (this.baseHref) {
-      configUrl = this.baseHref + configUrl;
-    }
     console.log('Config URL << >> ' + configUrl);
 
     return new Promise<void>((resolve, reject) => {
