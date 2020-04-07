@@ -14,7 +14,7 @@ import { CasesModule } from './cases/cases.module';
 import { AppConfig } from './app.config';
 import { ErrorComponent } from './error/error.component';
 import { SharedModule } from './shared/shared.module';
-import { isPlatformBrowser, APP_BASE_HREF, PlatformLocation, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { isPlatformBrowser, APP_BASE_HREF, LocationStrategy } from '@angular/common';
 import { OAuth2RedirectModule } from './oauth2/oauth2-redirect.module';
 import { AppConfigGuard } from './app.config.guard';
 import { AbstractAppConfig, ActivityModule } from '@hmcts/ccd-case-ui-toolkit';
@@ -46,10 +46,6 @@ export function getBaseHref(locationStrategy: LocationStrategy): string {
     ErrorComponent
   ],
   providers: [
-    {
-      provide: LocationStrategy,
-      useClass: PathLocationStrategy
-    },
     {
       provide: APP_BASE_HREF,
       useFactory: getBaseHref,
