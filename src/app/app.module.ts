@@ -20,6 +20,9 @@ import { AppConfigGuard } from './app.config.guard';
 import { AbstractAppConfig, ActivityModule } from '@hmcts/ccd-case-ui-toolkit';
 
 export function getBaseHref(platformLocation: PlatformLocation): string {
+  console.log((platformLocation as any).location);
+  console.log((platformLocation as any).location.href);
+  console.log((platformLocation as any).location.origin);
   return platformLocation.getBaseHrefFromDOM();
 }
 
