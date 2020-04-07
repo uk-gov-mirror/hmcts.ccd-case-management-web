@@ -5,23 +5,24 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import { AbstractAppConfig, CaseEditorConfig } from '@hmcts/ccd-case-ui-toolkit';
 import { environment } from '../environments/environment';
+import { LocationStrategy } from '@angular/common';
 
 @Injectable()
 export class AppConfig extends AbstractAppConfig {
 
   protected config: Config;
 
-  constructor(private http: Http, private location: Location) {
+  constructor(private http: Http, private location: LocationStrategy) {
     super();
   }
 
   public load(): Promise<void> {
     console.log('Loading app config...');
 
-    console.log('Origin URL ' + this.location.origin);
+    console.log('Origin URL ' + this.location.getBaseHref);
     let configUrl = environment.configUrl;
-    if (this.location.origin) {
-      configUrl = this.location.origin + configUrl;
+    if (this.location.getBaseHref) {
+      configUrl = this.location.getBaseHref + configUrl;
     }
     console.log('Config URL << >> ' + configUrl);
 
